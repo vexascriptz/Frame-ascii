@@ -1,40 +1,40 @@
-# frame/ — video to ASCII
+# frame/ — image and video to ASCII
 
-A static, local-first video-to-ASCII converter. No backend, API key, account, build step or dependency installation. The website uses JavaScript because GitHub Pages hosts static files; its Python export is a self-contained program with embedded animation data.
+A static, local-first converter for images and videos. No backend, API keys, accounts, build step or dependencies. Media stays in your browser.
 
-## GitHub Pages
+## Use
 
-1. Create a GitHub repository (for example, `frame-ascii`).
-2. Upload `index.html`, `style.css`, `app.js` and `.nojekyll` to the repository root. You can alternatively use the standalone HTML file by itself, renamed to `index.html`.
-3. Open **Settings → Pages → Build and deployment**, choose **Deploy from a branch**, and select `main` and `/(root)`. Save.
-4. GitHub will show your published URL when the deployment completes.
+Open the site, choose or drop an image/video, or paste an image. Pick an appearance preset, adjust the controls, and compare the original with the ASCII preview. For videos, play, pause, seek, trim, and select the frame rate.
 
-Local development: run `python -m http.server 8000` in the project directory and open `http://localhost:8000`.
+### Appearance
 
-## Conversion
+- Six presets: Balanced, High detail, Classic terminal, Pixel blocks, Soft color, Green binary.
+- RGB, grayscale and custom single-color text.
+- Adjustable resolution, brightness, contrast, gamma, saturation, edge enhancement, character aspect, ordered dithering, RGB palette and background.
+- Seven character-set choices including custom printable ASCII.
+- Transparent images are composited onto the selected background.
 
-- Select or drag in a video, then play, pause, seek or toggle its original audio.
-- Choose RGB, grayscale, or monochrome, character density, contrast, resolution and export frame rate.
-- Use the start/end fields to export only a section, particularly for longer videos.
-- Export a standalone Python animation, a standalone HTML animation, or a plain text frame (no color in plain text).
+### Export
 
-## Python playback
+| Format | Image | Video |
+| --- | --- | --- |
+| Python (.py) | Colored terminal artwork | Self-contained animation |
+| HTML | Standalone artwork | Standalone animation |
+| PNG | Rendered artwork | Current frame |
+| TXT | Plain ASCII | Current frame |
+| ANSI | Colored terminal text | Current frame |
+| Clipboard | Plain ASCII | Current frame |
 
-The generated Python file embeds the ASCII frames and RGB data. No original video or pip dependencies are required. Open a modern ANSI/true-color terminal such as Windows Terminal, macOS Terminal/iTerm2, or a Linux terminal. Run:
+Python requires Python 3.8+ and no external libraries. A modern true-color terminal is recommended. Video Python exports support `--loop`, `--speed 2` and `--no-color`. The Python and ANSI exports use the terminal's own background; the preview, PNG and HTML use your selected background. Animation exports do not include audio.
 
-```sh
-python video-ascii.py
-python video-ascii.py --loop
-python video-ascii.py --speed 2
-python video-ascii.py --no-color
-```
+Accurate mode seeks to each requested timestamp. Fast mode samples during 2× playback and can repeat or skip source frames, depending on the browser and device. Preview frame rate follows the FPS control. Python video data is gzip-compressed when the browser supports CompressionStream; monochrome frames omit RGB data.
 
-Use Ctrl+C to stop. The player fits the animation to the terminal dimensions. Python 3.8+ is recommended.
+## Host on GitHub Pages
 
-## Limits
+The entire application is in `index.html`. In repository Settings → Pages, select Deploy from a branch, `main`, and `/(root)`. Local testing: `python -m http.server 8000` and open http://localhost:8000.
 
-The browser must support the video container and codec. MP4 (H.264) and WebM are generally good choices. Unsupported codecs must be transcoded before importing. Exports contain sampled visual frames, not audio. Full-length videos at high resolution can generate very large files; the site limits estimated uncompressed export size to 100 MiB and frame count to 18,000. Export settings apply to generated animations, while live preview follows the video. Performance depends on device and browser.
+## Limits and verification
 
-## Verification
+The browser must support the source codec. MP4/H.264, WebM, PNG, JPEG and WebP are common choices. Animated images are treated as still images. The app limits large animation exports to an estimated 80 MiB of uncompressed data and 12,000 frames; lower FPS, resolution or trim duration for long videos.
 
-Browser smoke test using a one-second synthetic WebM: import, playback, Python/HTML/TXT downloads and HTML playback. Generated Python passed compilation and executed in a pseudo-terminal with ANSI RGB output. The browser sandbox blocked direct file and localhost navigation, so the test loaded the same page markup and script directly. Actual GitHub Pages deployment and mobile browser compatibility have not been tested.
+Version 2 automated JavaScript checks cover parsing, RGB and grayscale conversion, monochrome packing, inversion, transparency, image geometry, text and ANSI output, image Python generation, and generated HTML script syntax. These are logic checks with a mock DOM, not a live browser or mobile end-to-end test. Actual Pages deployment and device-specific codecs/playback remain to be verified.
