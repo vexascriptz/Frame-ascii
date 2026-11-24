@@ -1,40 +1,49 @@
-# frame/ — image and video to ASCII
+# frame/ studio
 
-A static, local-first converter for images and videos. No backend, API keys, accounts, build step or dependencies. Media stays in your browser.
+A browser-based image and video to ASCII editor. No server, uploads, accounts, build step or external libraries.
 
-## Use
+## Workflow
 
-Open the site, choose or drop an image/video, or paste an image. Pick an appearance preset, adjust the controls, and compare the original with the ASCII preview. For videos, play, pause, seek, trim, and select the frame rate.
+1. Import an image or video, drop a file, paste an image, or try the built-in sample.
+2. Choose one of nine visual looks or customize the character mapping and color.
+3. Use **Adjust** for levels, tone, dithering and geometry. The source histogram and Auto levels help improve low-contrast footage.
+4. Use **Motion** to choose a video frame rate, conversion mode and trim interval. Set in/out from the playhead.
+5. Compare ASCII, original or split preview. Export using the format selector.
 
-### Appearance
+The editor displays input dimensions, character grid dimensions, and the measured time spent converting and painting the current frame. Save/load look stores one settings preset in your browser's local storage, not your media.
 
-- Six presets: Balanced, High detail, Classic terminal, Pixel blocks, Soft color, Green binary.
-- RGB, grayscale and custom single-color text.
-- Adjustable resolution, brightness, contrast, gamma, saturation, edge enhancement, character aspect, ordered dithering, RGB palette and background.
-- Seven character-set choices including custom printable ASCII.
-- Transparent images are composited onto the selected background.
+## Rendering
 
-### Export
+- RGB, grayscale, monochrome and duotone.
+- Nine looks, seven character ramps (including custom ASCII), calibrated glyph density and directional contours.
+- Resolution up to 300 columns, brightness, contrast, gamma, saturation, black and white points, edge enhancement, character aspect, mirroring, custom background and text colors, ordered and error-diffusion dithering, and palette reduction.
+- Glyph calibration measures the browser monospace font once per character set; exact appearance varies by browser and terminal font.
+- Split comparison and fullscreen (where supported).
+- Accurate timestamp seeking or faster 2× playback sampling; fast mode can skip/repeat source frames.
+
+Keyboard: O opens import, C cycles the preview mode, Space plays/pauses video when focus is not on an input or button.
+
+## Exports
 
 | Format | Image | Video |
 | --- | --- | --- |
-| Python (.py) | Colored terminal artwork | Self-contained animation |
+| Python | Colored terminal art | Self-contained animation |
 | HTML | Standalone artwork | Standalone animation |
-| PNG | Rendered artwork | Current frame |
+| JSON | Character and RGB data | Character and RGB frame sequence |
+| PNG | Raster artwork | Current frame |
+| SVG | Editable vector text | Current frame |
 | TXT | Plain ASCII | Current frame |
-| ANSI | Colored terminal text | Current frame |
+| ANSI | Terminal color text | Current frame |
 | Clipboard | Plain ASCII | Current frame |
 
-Python requires Python 3.8+ and no external libraries. A modern true-color terminal is recommended. Video Python exports support `--loop`, `--speed 2` and `--no-color`. The Python and ANSI exports use the terminal's own background; the preview, PNG and HTML use your selected background. Animation exports do not include audio.
+Python 3.8+ with a modern ANSI/true-color terminal is recommended. No pip dependencies. Video Python supports `--loop`, `--speed 2`, and `--no-color`. Python/ANSI use the terminal's background; PNG, SVG and HTML preserve the selected background. Video exports do not contain audio. SVG uses live text and may vary according to installed fonts.
 
-Accurate mode seeks to each requested timestamp. Fast mode samples during 2× playback and can repeat or skip source frames, depending on the browser and device. Preview frame rate follows the FPS control. Python video data is gzip-compressed when the browser supports CompressionStream; monochrome frames omit RGB data.
+## Deployment
 
-## Host on GitHub Pages
+The complete app is in `index.html`. GitHub Pages: Settings → Pages → Deploy from a branch → main → /(root). Local: `python -m http.server 8000`.
 
-The entire application is in `index.html`. In repository Settings → Pages, select Deploy from a branch, `main`, and `/(root)`. Local testing: `python -m http.server 8000` and open http://localhost:8000.
+## Limitations and verification
 
-## Limits and verification
+Browser media codec support applies. MP4/H.264, WebM, PNG, JPEG and WebP are common choices. Animated images are treated as stills. Animation exports have an estimated 80 MiB uncompressed limit and 12,000-frame cap; trim longer sources or reduce resolution/FPS.
 
-The browser must support the source codec. MP4/H.264, WebM, PNG, JPEG and WebP are common choices. Animated images are treated as still images. The app limits large animation exports to an estimated 80 MiB of uncompressed data and 12,000 frames; lower FPS, resolution or trim duration for long videos.
-
-Version 2 automated JavaScript checks cover parsing, RGB and grayscale conversion, monochrome packing, inversion, transparency, image geometry, text and ANSI output, image Python generation, and generated HTML script syntax. These are logic checks with a mock DOM, not a live browser or mobile end-to-end test. Actual Pages deployment and device-specific codecs/playback remain to be verified.
+V3 JavaScript syntax and static DOM references checked. Fifteen automated mock-DOM logic checks passed for tone mapping, color, histograms, diffusion, contours, density calibration, SVG escaping, and export generation. No live browser or mobile end-to-end test or visual review was performed in this update; speed and device compatibility are not benchmarked.
