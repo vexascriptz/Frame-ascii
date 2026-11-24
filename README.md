@@ -1,4 +1,4 @@
-# frame/ studio
+# frame/ studio IV
 
 A browser-based image and video to ASCII editor. No server, uploads, accounts, build step or external libraries.
 
@@ -11,6 +11,14 @@ A browser-based image and video to ASCII editor. No server, uploads, accounts, b
 5. Compare ASCII, original or split preview. Export using the format selector.
 
 The editor displays input dimensions, character grid dimensions, and the measured time spent converting and painting the current frame. Save/load look stores one settings preset in your browser's local storage, not your media.
+
+## Studio IV
+
+- Live source-based look thumbnails, graphite workspace, zoom up to 400%, and a responsive canvas.
+- Undo/redo for appearance settings, portable JSON look files, and local preset storage.
+- Adaptive playback preview and full-resolution export, center crop, and eight-dot Braille rendering with adjustable threshold.
+- PNG scaling (1–3×) with optional transparent background; download the last export again.
+- Browser-supported MP4/WebM export via MediaRecorder. Recording runs in real time, does not include audio, and may drop frames on slower devices. Format availability is detected in the browser.
 
 ## Rendering
 
@@ -35,6 +43,7 @@ Keyboard: O opens import, C cycles the preview mode, Space plays/pauses video wh
 | TXT | Plain ASCII | Current frame |
 | ANSI | Terminal color text | Current frame |
 | Clipboard | Plain ASCII | Current frame |
+| MP4 / WebM | — | Real-time recording, browser dependent |
 
 Python 3.8+ with a modern ANSI/true-color terminal is recommended. No pip dependencies. Video Python supports `--loop`, `--speed 2`, and `--no-color`. Python/ANSI use the terminal's background; PNG, SVG and HTML preserve the selected background. Video exports do not contain audio. SVG uses live text and may vary according to installed fonts.
 
@@ -46,4 +55,4 @@ The complete app is in `index.html`. GitHub Pages: Settings → Pages → Deploy
 
 Browser media codec support applies. MP4/H.264, WebM, PNG, JPEG and WebP are common choices. Animated images are treated as stills. Animation exports have an estimated 80 MiB uncompressed limit and 12,000-frame cap; trim longer sources or reduce resolution/FPS.
 
-V3 JavaScript syntax and static DOM references checked. Fifteen automated mock-DOM logic checks passed for tone mapping, color, histograms, diffusion, contours, density calibration, SVG escaping, and export generation. No live browser or mobile end-to-end test or visual review was performed in this update; speed and device compatibility are not benchmarked.
+V4 JavaScript syntax and static DOM references checked. Twenty-three automated mock-DOM checks passed for tone mapping, color, histograms, diffusion, contours, calibration, SVG escaping, exports, Braille bit mapping, crop, draft preview and undo/redo. A repeatable Chromium smoke test is included in `tests/smoke.py`. Run `pip install playwright`, `playwright install chromium`, then `python tests/smoke.py` from a local clone. The live browser test has not been executed in this update; visual quality, video recording and device-specific compatibility remain unverified.
